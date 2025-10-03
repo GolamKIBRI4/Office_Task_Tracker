@@ -1,7 +1,4 @@
-
-
 name: PHP CI/CD
-
 
 on:
   push:
@@ -9,17 +6,13 @@ on:
   pull_request:
     branches: [ "main", "develop" ]
 
-
 jobs:
   build:
-    
     runs-on: ubuntu-latest
 
-    
     services:
       mariadb:
         image: mariadb:10.7
-        
         env:
           MYSQL_ROOT_PASSWORD: rootpassword
           MYSQL_DATABASE: task_tracker
@@ -27,29 +20,23 @@ jobs:
           MYSQL_PASSWORD: testpassword
         ports:
           - 3306:3306
-        
-        options: "--health-cmd=mysqladmin ping -h 127.0.0.1 -u root -prootpassword --health-interval=10s --health-timeout=5s --health-retries=5"
+        options: "--health-cmd=\"mysqladmin ping -h 127.0.0.1 -u root -prootpassword\" --health-interval=10s --health-timeout=5s --health-retries=5"
 
-    
     strategy:
       matrix:
         php-version: ['8.1', '8.2', '8.3']
 
     steps:
-    
-      
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
-          extensions: mbstring, curl, json, pdo_mysql 
+          extensions: mbstring, curl, json, pdo_mysql
           coverage: none
 
-      
       - name: Cache Composer Dependencies
         id: composer-cache
         uses: actions/cache@v4
@@ -58,13 +45,10 @@ jobs:
           key: ${{ runner.os }}-${{ matrix.php-version }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.php-version }}-composer-
-      
-      
+
       - name: Install Dependencies
         run: composer install --prefer-dist --no-progress --no-suggest
-        
 
-      
       - name: Wait for Database to be ready
         run: |
           max_retries=10
