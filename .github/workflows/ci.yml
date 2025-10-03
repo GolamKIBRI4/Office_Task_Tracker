@@ -21,14 +21,14 @@ jobs:
         image: mariadb:10.7
         
         env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }} 
+          MYSQL_ROOT_PASSWORD: rootpassword
           MYSQL_DATABASE: task_tracker
           MYSQL_USER: testuser
           MYSQL_PASSWORD: testpassword
         ports:
           - 3306:3306
         
-        options: "--health-cmd=mysqladmin ping -h 127.0.0.1 -u root -p'${{ secrets.DB_ROOT_PASSWORD }}' --health-interval=10s --health-timeout=5s --health-retries=5"
+        options: "--health-cmd=mysqladmin ping -h 127.0.0.1 -u root -prootpassword --health-interval=10s --health-timeout=5s --health-retries=5"
 
     
     strategy:
@@ -69,7 +69,7 @@ jobs:
         run: |
           max_retries=10
           for i in $(seq 1 $max_retries); do
-            if mysql -h 127.0.0.1 -u testuser -ptestpassword task_tracker -e "SELECT 1" > /dev/null 2>&1; then
+            if mysql -h 127.0.0.1 -u root -prootpassword task_tracker -e "SELECT 1" > /dev/null 2>&1; then
               echo "Database is up and running!"
               exit 0
             fi
