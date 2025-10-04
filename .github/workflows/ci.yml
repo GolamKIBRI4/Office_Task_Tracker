@@ -88,3 +88,5 @@ jobs:
             **/.github/workflows/**
             **/.env
             **/.gitignore
+            **/README.md
+            **/api/database.php
