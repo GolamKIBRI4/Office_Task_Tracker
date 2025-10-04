@@ -62,3 +62,29 @@ jobs:
           done
           echo "Database service failed to start."
           exit 1
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy to InfinityFree
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ftpupload.net
+          username: if0_40080027      
+          password: s7TE50DbzH5MdJ9
+          server-dir: /htdocs/
+          local-dir: ./
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.github/**
+            **/.github/workflows/**
+            **/.env
+            **/.gitignore
